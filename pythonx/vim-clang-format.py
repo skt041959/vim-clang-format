@@ -16,8 +16,6 @@ def format_and_replace(cmd):
             lambda x: x[0] != 'equal',
             difflib.SequenceMatcher(None, buffer_content,
                                     buffer_formatted).get_opcodes()))
-    vim.out_write(str(cmd) + '\n')
-    vim.out_write(str(groups) + '\n')
     if not groups:
         return
     tag, i1, _, j1, _ = groups[0]
