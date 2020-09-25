@@ -10,6 +10,9 @@ else
     let s:bool_t = -1
 endif
 
+runtime autoload/yarp.vim
+let s:py_model = exists('*yarp#py3') ? yarp#py3('vim-clang-format') : ''
+
 " helper functions {{{
 function! s:has_vimproc() abort
     if !exists('s:exists_vimproc')
@@ -223,11 +226,36 @@ function! clang_format#format(line1, line2) abort
     let source = join(getline(1, '$'), "\n")
     return s:system(clang_format, source)
 endfunction
+
+function! clang_format#format_args(line1, line2) abort
+    let args = [g:clang_format#command]
+    call add(args, printf('-lines=%d:%d', a:line1, a:line2))
+    if ! (g:clang_format#detect_style_file && s:detect_style_file())
+        if g:clang_format#enable_fallback_style
+            call add(args, printf('-style=%s', s:make_style_options()))
+        else
+            call add(args, '-fallback-style=none')
+        endif
+    else
+        call add(args, '-style=file')
+    endif
+    call add(args, printf('-assume-filename=%s ', bufname()))
+    if !empty(g:clang_format#extra_args)
+        call add(args, g:clang_format#extra_args)
+    endif
+    call add(args, '--')
+    return args
+endfunction
 " }}}
 
 " replace buffer {{{
 function! clang_format#replace(line1, line2, ...) abort
     call s:verify_command()
+    
+    if !empty(s:py_model)
+        call s:py_model.request('format_and_replace', clang_format#format_args(a:line1, a:line2))
+        return
+    endif
 
     let pos_save = a:0 >= 1 ? a:1 : getpos('.')
     let formatted = clang_format#format(a:line1, a:line2)
