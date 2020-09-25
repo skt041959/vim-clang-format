@@ -14,6 +14,11 @@ Currently below languages are supported:
 - TypeScript
 - Protobuf
 
+## Compare to rhysd's original
+
+It will only update the region changed by clang-format, instead of using `call setline(1, splitted)` to update whole buffer.  
+Hence, it depend on [nvim-yarp](https://github.com/roxma/nvim-yarp) to do this trick.
+
 ## Screenshot
 
 ![Screenshot](https://raw.githubusercontent.com/rhysd/ss/master/vim-clang-format/main.gif)
@@ -23,6 +28,7 @@ Currently below languages are supported:
 - `clang-format` command (**3.4 or later**), which is bundled in Clang extra tools
 - [vim-operator-user](https://github.com/kana/vim-operator-user)(highly recommended)
 - [vimproc.vim](https://github.com/Shougo/vimproc.vim)(recommended in Windows)
+- [nvim-yarp](https://github.com/roxma/nvim-yarp)(recommended to support region update)
 
 ## Installation
 
